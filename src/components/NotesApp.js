@@ -3,6 +3,7 @@ import NotesHeader from './NotesHeader';
 import { getInitialData } from '../utils/data';
 import NotesList from './NotesList';
 import NotesBody from './NotesBody';
+import NotesInput from './NoteInput';
 
 class NotesApp extends React.Component {
     constructor(props) {
@@ -15,6 +16,7 @@ class NotesApp extends React.Component {
         this.onArchiveHandlerNotes = this.onArchiveHandlerNotes.bind(this);
         this.onUnArchiveHandlerNotes = this.onUnArchiveHandlerNotes.bind(this);
         this.onDeleteHandlerArchive = this.onDeleteHandlerArchive.bind(this);
+        this.onAddNotesHandler = this.onAddNotesHandler.bind(this);
     }
 
     onDeleteHandlerNotes(id) {
@@ -73,11 +75,29 @@ class NotesApp extends React.Component {
         })
     }
 
+    onAddNotesHandler({title, body}) {
+        this.setState((prevState) => {
+            return {
+                notes: [
+                    ...prevState.notes,
+                    {
+                        id: +new Date(),
+                        title: title,
+                        body: body,
+                        createdAt: new Date(),
+                        archived: false,
+                    }
+                ]
+            }
+        })
+    }
+
     render() {
         return (
             <>
                 <NotesHeader />
                 <NotesBody>
+                    <NotesInput addNote={this.onAddNotesHandler} />
                     <h2>Catatan Aktif</h2>
                     <NotesList notes={this.state.notes} isArchived={false} onDelete={this.onDeleteHandlerNotes} onArchive={this.onArchiveHandlerNotes} />
                     <h2>Arsip</h2>
