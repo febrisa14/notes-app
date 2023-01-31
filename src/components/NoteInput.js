@@ -18,7 +18,7 @@ class NotesInput extends React.Component {
     onTitleChangeEventHandler(event) {
         this.setState(() => {
             return {
-                title: event.target.value
+                title: event.target.value.slice(0, 50)
             }
         })
     }
@@ -43,10 +43,16 @@ class NotesInput extends React.Component {
     }
     
     render() {
+        const count = 50;
         return (
             <div className="note-input">
                 <h2>Buat Catatan</h2>
-                <NotesForm title={this.state.title} body={this.state.body} onSubmit={this.onSubmitEventHandler} onTitleChangeEventHandler={this.onTitleChangeEventHandler} onBodyChangeEventHandler={this.onBodyChangeEventHandler}/>
+                <NotesForm count={count-this.state.title.length} 
+                    title={this.state.title} 
+                    body={this.state.body} 
+                    onSubmit={this.onSubmitEventHandler} 
+                    onTitleChangeEventHandler={this.onTitleChangeEventHandler} 
+                    onBodyChangeEventHandler={this.onBodyChangeEventHandler} />
             </div>
         );
     }

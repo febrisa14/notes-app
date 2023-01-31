@@ -11,12 +11,17 @@ class NotesApp extends React.Component {
         this.state = {
             notes: getInitialData(),
             archived: [],
+            search: "",
+            result: [],
+            resultArchived: [],
+            isSearched: false,
         }
         this.onDeleteHandlerNotes = this.onDeleteHandlerNotes.bind(this);
         this.onArchiveHandlerNotes = this.onArchiveHandlerNotes.bind(this);
         this.onUnArchiveHandlerNotes = this.onUnArchiveHandlerNotes.bind(this);
         this.onDeleteHandlerArchive = this.onDeleteHandlerArchive.bind(this);
         this.onAddNotesHandler = this.onAddNotesHandler.bind(this);
+        this.onSearchNotesHandler = this.onSearchNotesHandler.bind(this);
     }
 
     onDeleteHandlerNotes(id) {
@@ -92,16 +97,60 @@ class NotesApp extends React.Component {
         })
     }
 
+    onSearchNotesHandler(event) {
+        var search = event.target.value;
+        const notes = this.state.notes;
+        const archived = this.state.archived;
+
+        var resultNotes, resultArchived = [];
+        var isSearched = this.state.isSearched;
+        if (search === "") {
+            resultNotes = notes;
+            resultArchived = archived;
+            isSearched = false;
+            search = "";
+        } else {
+            resultNotes = notes.filter(note => {
+                return Object.values(note.title).join('').toLocaleLowerCase().includes(search.toLowerCase())
+            });
+            resultArchived = archived.filter(note => {
+                return Object.values(note.title).join('').toLocaleLowerCase().includes(search.toLowerCase())
+            });
+            isSearched = true;
+        }
+
+        this.setState(() => {
+            return {
+                search: search,
+                result: resultNotes,
+                resultArchived: resultArchived,
+                isSearched: isSearched
+            }
+        })
+    }
+
     render() {
         return (
             <>
-                <NotesHeader />
+                <NotesHeader searchNote={this.onSearchNotesHandler} />
                 <NotesBody>
                     <NotesInput addNote={this.onAddNotesHandler} />
                     <h2>Catatan Aktif</h2>
-                    <NotesList notes={this.state.notes} isArchived={false} onDelete={this.onDeleteHandlerNotes} onArchive={this.onArchiveHandlerNotes} />
+                    <NotesList 
+                        notes={this.state.notes}
+                        result={this.state.result}
+                        isSearched={this.state.isSearched}
+                        isArchived={false} 
+                        onDelete={this.onDeleteHandlerNotes} 
+                        onArchive={this.onArchiveHandlerNotes} />
                     <h2>Arsip</h2>
-                    <NotesList notes={this.state.archived} isArchived onDelete={this.onDeleteHandlerArchive} onArchive={this.onUnArchiveHandlerNotes} />
+                    <NotesList 
+                        notes={this.state.archived} 
+                        result={this.state.resultArchived}
+                        isSearched={this.state.isSearched}
+                        isArchived 
+                        onDelete={this.onDeleteHandlerArchive} 
+                        onArchive={this.onUnArchiveHandlerNotes} />
                 </NotesBody>
             </>
         )
