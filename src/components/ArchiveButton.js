@@ -1,15 +1,9 @@
 import React from 'react';
 
 function ArchiveButton({ id, onArchive, isArchived }) {
-    if (isArchived) {
-        return (
-            <button className="note-item__archive-button" onClick={() => onArchive(id)}>Pindahkan</button>
-        );
-    } else {
-        return (
-            <button className="note-item__archive-button" onClick={() => onArchive(id)}>Arsipkan</button>
-        );
-    }
+    return (
+        <button className="note-item__archive-button" onClick={() => onArchive(id)}>{isArchived ? "Pindahkan" : "Arsipkan"}</button>
+    );
 }
 
 export default ArchiveButton;

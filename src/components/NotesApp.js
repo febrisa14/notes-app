@@ -26,15 +26,19 @@ class NotesApp extends React.Component {
 
     onDeleteHandlerNotes(id) {
         const notes = this.state.notes.filter(note => note.id !== id);
+        const result = this.state.result.filter(note => note.id !== id);
         this.setState({
             notes: notes,
+            result: result,
         });
     }
 
     onDeleteHandlerArchive(id) {
         const archived = this.state.archived.filter(note => note.id !== id);
+        const resultArchived = this.state.resultArchived.filter(note => note.id !== id);
         this.setState({
             archived: archived,
+            resultArchived: resultArchived
         })
     }
 
@@ -46,15 +50,28 @@ class NotesApp extends React.Component {
                 return note;
             }
         });
+        const updateListResult = this.state.result.map(note => {
+            if (note.id === id) {
+                return { ...note, archived: true };
+            } else {
+                return note;
+            }
+        });
         const notes = updateList.filter(note => note.archived !== true);
         const archived = updateList.filter(note => note.archived !== false);
+        const result = updateListResult.filter(note => note.archived !== true);
+        const resultArchived = updateListResult.filter(note => note.archived !== false);
 
         this.setState((prevState) => {
             return {
                 archived: [
                     ...prevState.archived, ...archived
                 ],
-                notes: notes
+                notes: notes,
+                resultArchived: [
+                    ...prevState.resultArchived, ...resultArchived
+                ],
+                result: result
             }
         })
     }
@@ -67,15 +84,28 @@ class NotesApp extends React.Component {
                 return note;
             }
         });
+        const updateListResultArchived = this.state.resultArchived.map(note => {
+            if (note.id === id) {
+                return { ...note, archived: false };
+            } else {
+                return note;
+            }
+        })
         const findArchived = updateList.filter(note => note.id === id);
         const archived = updateList.filter(note => note.archived !== false);
+        const findResultArchived = updateListResultArchived.filter(note => note.id === id);
+        const resultArchived = updateListResultArchived.filter(note => note.archived !== false);
 
         this.setState((prevState) => {
             return {
                 archived: archived,
+                resultArchived: resultArchived,
                 notes: [
                     ...prevState.notes, ...findArchived
                 ],
+                result: [
+                    ...prevState.result, ...findResultArchived
+                ]
             }
         })
     }
@@ -85,6 +115,16 @@ class NotesApp extends React.Component {
             return {
                 notes: [
                     ...prevState.notes,
+                    {
+                        id: +new Date(),
+                        title: title,
+                        body: body,
+                        createdAt: new Date(),
+                        archived: false,
+                    }
+                ],
+                result: [
+                    ...prevState.result,
                     {
                         id: +new Date(),
                         title: title,
@@ -102,7 +142,8 @@ class NotesApp extends React.Component {
         const notes = this.state.notes;
         const archived = this.state.archived;
 
-        var resultNotes, resultArchived = [];
+        var resultNotes = [];
+        var resultArchived = [];
         var isSearched = this.state.isSearched;
         if (search === "") {
             resultNotes = notes;
